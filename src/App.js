@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 
+const CITIES = [
+  { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
+  { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
+  { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
+  { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
+];
+
+const GOLD = '#D4AF37';
+const GOLD_DIM = 'rgba(212,175,55,0.15)';
+const GOLD_BORDER = 'rgba(212,175,55,0.6)';
+
+const SPARKLES = [[88,85],[12,20],[90,15],[5,70]];
+
 export default function App() {
   const [prenom, setPrenom] = useState('');
   const [hover, setHover] = useState(null);
-
-  const cities = [
-    { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
-    { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
-    { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
-    { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
-  ];
-
-  const gold = '#D4AF37';
-  const goldDim = 'rgba(212,175,55,0.15)';
-  const goldBorder = 'rgba(212,175,55,0.6)';
 
   return (
     <div style={{
@@ -79,7 +81,7 @@ export default function App() {
           fontSize: 28,
           fontWeight: 400,
           letterSpacing: 10,
-          color: gold,
+          color: GOLD,
           textShadow: `0 0 20px rgba(212,175,55,0.5)`,
         }}>
           V I B E
@@ -88,7 +90,7 @@ export default function App() {
         {/* Gold line */}
         <div style={{
           width: '100%', height: 1,
-          background: `linear-gradient(to right, transparent, ${goldBorder}, transparent)`,
+          background: `linear-gradient(to right, transparent, ${GOLD_BORDER}, transparent)`,
           marginBottom: 20,
         }}/>
 
@@ -100,22 +102,22 @@ export default function App() {
           width: '100%',
           marginBottom: 24,
         }}>
-          {cities.map(city => (
+          {CITIES.map(city => (
             <a
               key={city.name}
               href={city.url}
               onMouseEnter={() => setHover(city.name)}
               onMouseLeave={() => setHover(null)}
               style={{
-                border: `1px solid ${hover === city.name ? gold : goldBorder}`,
+                border: `1px solid ${hover === city.name ? GOLD : GOLD_BORDER}`,
                 padding: '14px 8px',
                 textDecoration: 'none',
-                color: gold,
+                color: GOLD,
                 textAlign: 'center',
                 fontSize: 11,
                 letterSpacing: 2,
                 borderRadius: 2,
-                background: hover === city.name ? goldDim : 'transparent',
+                background: hover === city.name ? GOLD_DIM : 'transparent',
                 transition: 'all 0.25s ease',
                 display: 'block',
                 boxShadow: hover === city.name ? `0 0 12px rgba(212,175,55,0.2)` : 'none',
@@ -129,7 +131,7 @@ export default function App() {
         {/* Gold line */}
         <div style={{
           width: '100%', height: 1,
-          background: `linear-gradient(to right, transparent, ${goldBorder}, transparent)`,
+          background: `linear-gradient(to right, transparent, ${GOLD_BORDER}, transparent)`,
           marginBottom: 20,
         }}/>
 
@@ -143,8 +145,8 @@ export default function App() {
             style={{
               background: 'transparent',
               border: 'none',
-              borderBottom: `1px solid ${goldBorder}`,
-              color: gold,
+              borderBottom: `1px solid ${GOLD_BORDER}`,
+              color: GOLD,
               width: '100%',
               padding: '8px 0',
               outline: 'none',
@@ -155,18 +157,18 @@ export default function App() {
           />
           <div style={{
             position: 'absolute', right: 0, bottom: 8,
-            color: goldBorder, fontSize: 14,
+            color: GOLD_BORDER, fontSize: 14,
           }}>→</div>
         </div>
       </div>
 
       {/* Sparkles */}
-      {[[88,85],[12,20],[90,15],[5,70]].map(([x,y],i) => (
+      {SPARKLES.map(([x,y],i) => (
         <div key={i} style={{
           position:'absolute', left:`${x}%`, top:`${y}%`,
-          color: gold, fontSize: i===0?20:12, opacity: 0.6,
+          color: GOLD, fontSize: i===0?20:12, opacity: 0.6,
           pointerEvents:'none', zIndex:5,
-          textShadow:`0 0 8px ${gold}`
+          textShadow:`0 0 8px ${GOLD}`
         }}>✦</div>
       ))}
 
