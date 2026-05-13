@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 
+const gold = '#D4AF37';
+const goldDim = 'rgba(212,175,55,0.15)';
+const goldBorder = 'rgba(212,175,55,0.6)';
+
+function GoldLine() {
+  return (
+    <div style={{
+      width: '100%', height: 1,
+      background: `linear-gradient(to right, transparent, ${goldBorder}, transparent)`,
+      marginBottom: 20,
+    }}/>
+  );
+}
+
 export default function App() {
   const [prenom, setPrenom] = useState('');
   const [hover, setHover] = useState(null);
@@ -10,10 +24,6 @@ export default function App() {
     { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
     { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
   ];
-
-  const gold = '#D4AF37';
-  const goldDim = 'rgba(212,175,55,0.15)';
-  const goldBorder = 'rgba(212,175,55,0.6)';
 
   return (
     <div style={{
@@ -86,11 +96,7 @@ export default function App() {
         </h1>
 
         {/* Gold line */}
-        <div style={{
-          width: '100%', height: 1,
-          background: `linear-gradient(to right, transparent, ${goldBorder}, transparent)`,
-          marginBottom: 20,
-        }}/>
+        <GoldLine />
 
         {/* City grid */}
         <div style={{
@@ -127,11 +133,7 @@ export default function App() {
         </div>
 
         {/* Gold line */}
-        <div style={{
-          width: '100%', height: 1,
-          background: `linear-gradient(to right, transparent, ${goldBorder}, transparent)`,
-          marginBottom: 20,
-        }}/>
+        <GoldLine />
 
         {/* Prénom input */}
         <div style={{ width: '100%', position: 'relative' }}>
