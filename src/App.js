@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const sparkles = [[88,85],[12,20],[90,15],[5,70]];
+
 export default function App() {
   const [prenom, setPrenom] = useState('');
   const [hover, setHover] = useState(null);
@@ -161,7 +163,7 @@ export default function App() {
       </div>
 
       {/* Sparkles */}
-      {[[88,85],[12,20],[90,15],[5,70]].map(([x,y],i) => (
+      {sparkles.map(([x,y],i) => (
         <div key={i} style={{
           position:'absolute', left:`${x}%`, top:`${y}%`,
           color: gold, fontSize: i===0?20:12, opacity: 0.6,
