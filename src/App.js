@@ -1,20 +1,78 @@
 import React, { useState } from "react";
 
-export default function App() {
+// Optimization: Externalize static constants to avoid recreation on every render
+const cities = [
+  { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
+  { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
+  { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
+  { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
+];
+
+const gold = '#D4AF37';
+const goldDim = 'rgba(212,175,55,0.15)';
+const goldBorder = 'rgba(212,175,55,0.6)';
+const sparkles = [[88,85],[12,20],[90,15],[5,70]];
+
+// Optimization: Localize state to prevent unnecessary re-renders of the entire app
+function CityLink({ city }) {
+  const [hover, setHover] = useState(false);
+  return (
+    <a
+      href={city.url}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        border: `1px solid ${hover ? gold : goldBorder}`,
+        padding: '14px 8px',
+        textDecoration: 'none',
+        color: gold,
+        textAlign: 'center',
+        fontSize: 11,
+        letterSpacing: 2,
+        borderRadius: 2,
+        background: hover ? goldDim : 'transparent',
+        transition: 'all 0.25s ease',
+        display: 'block',
+        boxShadow: hover ? `0 0 12px rgba(212,175,55,0.2)` : 'none',
+      }}
+    >
+      {city.name}
+    </a>
+  );
+}
+
+// Optimization: Localize state to prevent unnecessary re-renders of the entire app
+function PrenomInput() {
   const [prenom, setPrenom] = useState('');
-  const [hover, setHover] = useState(null);
+  return (
+    <div style={{ width: '100%', position: 'relative' }}>
+      <input
+        type="text"
+        placeholder="Votre Prénom"
+        value={prenom}
+        onChange={e => setPrenom(e.target.value)}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          borderBottom: `1px solid ${goldBorder}`,
+          color: gold,
+          width: '100%',
+          padding: '8px 0',
+          outline: 'none',
+          fontSize: 12,
+          letterSpacing: 2,
+          fontFamily: 'Georgia, serif',
+        }}
+      />
+      <div style={{
+        position: 'absolute', right: 0, bottom: 8,
+        color: goldBorder, fontSize: 14,
+      }}>→</div>
+    </div>
+  );
+}
 
-  const cities = [
-    { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
-    { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
-    { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
-    { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
-  ];
-
-  const gold = '#D4AF37';
-  const goldDim = 'rgba(212,175,55,0.15)';
-  const goldBorder = 'rgba(212,175,55,0.6)';
-
+export default function App() {
   return (
     <div style={{
       position: 'relative',
@@ -101,28 +159,7 @@ export default function App() {
           marginBottom: 24,
         }}>
           {cities.map(city => (
-            <a
-              key={city.name}
-              href={city.url}
-              onMouseEnter={() => setHover(city.name)}
-              onMouseLeave={() => setHover(null)}
-              style={{
-                border: `1px solid ${hover === city.name ? gold : goldBorder}`,
-                padding: '14px 8px',
-                textDecoration: 'none',
-                color: gold,
-                textAlign: 'center',
-                fontSize: 11,
-                letterSpacing: 2,
-                borderRadius: 2,
-                background: hover === city.name ? goldDim : 'transparent',
-                transition: 'all 0.25s ease',
-                display: 'block',
-                boxShadow: hover === city.name ? `0 0 12px rgba(212,175,55,0.2)` : 'none',
-              }}
-            >
-              {city.name}
-            </a>
+            <CityLink key={city.name} city={city} />
           ))}
         </div>
 
@@ -134,34 +171,11 @@ export default function App() {
         }}/>
 
         {/* Prénom input */}
-        <div style={{ width: '100%', position: 'relative' }}>
-          <input
-            type="text"
-            placeholder="Votre Prénom"
-            value={prenom}
-            onChange={e => setPrenom(e.target.value)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              borderBottom: `1px solid ${goldBorder}`,
-              color: gold,
-              width: '100%',
-              padding: '8px 0',
-              outline: 'none',
-              fontSize: 12,
-              letterSpacing: 2,
-              fontFamily: 'Georgia, serif',
-            }}
-          />
-          <div style={{
-            position: 'absolute', right: 0, bottom: 8,
-            color: goldBorder, fontSize: 14,
-          }}>→</div>
-        </div>
+        <PrenomInput />
       </div>
 
       {/* Sparkles */}
-      {[[88,85],[12,20],[90,15],[5,70]].map(([x,y],i) => (
+      {sparkles.map(([x,y],i) => (
         <div key={i} style={{
           position:'absolute', left:`${x}%`, top:`${y}%`,
           color: gold, fontSize: i===0?20:12, opacity: 0.6,
