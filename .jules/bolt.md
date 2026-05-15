@@ -1,0 +1,3 @@
+## 2024-05-15 - React Component Re-renders
+**Learning:** In a single-file React app like this one (`src/App.js`), placing all state and mapping logic in the top-level component causes the entire application (including complex gradients, box-shadows, and static lists) to re-render on every state change (e.g., typing in an input field or hovering over an element).
+**Action:** Extract specific UI sections that use state into their own functional components (e.g., `PrenomInput`, `CityGrid`) and move their respective state down into those components to isolate re-renders. Also move static definitions out of the component scope. Always remember to clean up build artifacts and temporary files.
