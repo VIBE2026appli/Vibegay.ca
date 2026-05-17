@@ -1,19 +1,22 @@
 import React, { useState } from "react";
 
+// ⚡ Bolt: Extracted static constants out of the component to prevent recreating them on every render
+// Expected impact: Minor reduction in memory allocation and GC overhead during typing/hovering
+const cities = [
+  { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
+  { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
+  { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
+  { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
+];
+
+const gold = '#D4AF37';
+const goldDim = 'rgba(212,175,55,0.15)';
+const goldBorder = 'rgba(212,175,55,0.6)';
+const sparkles = [[88,85],[12,20],[90,15],[5,70]];
+
 export default function App() {
   const [prenom, setPrenom] = useState('');
   const [hover, setHover] = useState(null);
-
-  const cities = [
-    { name: 'MONTRÉAL', url: 'https://vibegay.ca/montreal' },
-    { name: 'QUÉBEC',   url: 'https://vibegay.ca/quebec'   },
-    { name: 'OTTAWA',   url: 'https://vibegay.ca/ottawa'   },
-    { name: 'TORONTO',  url: 'https://vibegay.ca/toronto'  }
-  ];
-
-  const gold = '#D4AF37';
-  const goldDim = 'rgba(212,175,55,0.15)';
-  const goldBorder = 'rgba(212,175,55,0.6)';
 
   return (
     <div style={{
@@ -161,7 +164,7 @@ export default function App() {
       </div>
 
       {/* Sparkles */}
-      {[[88,85],[12,20],[90,15],[5,70]].map(([x,y],i) => (
+      {sparkles.map(([x,y],i) => (
         <div key={i} style={{
           position:'absolute', left:`${x}%`, top:`${y}%`,
           color: gold, fontSize: i===0?20:12, opacity: 0.6,
