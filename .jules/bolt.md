@@ -1,0 +1,3 @@
+## 2024-03-24 - GPU Compositing for Heavy CSS Filters
+**Learning:** This codebase uses extremely heavy \`filter: blur()\` effects for aesthetic background "glow blobs". When these background elements sit behind interactive components (like links with hover states or inputs), the main thread struggles to repaint the blur effect on every interaction, causing significant UI lag (dropped frames).
+**Action:** When implementing or seeing heavy CSS filters (\`blur\`, \`drop-shadow\`) behind interactive elements, always force them onto a separate GPU layer using \`transform: translateZ(0)\` and \`will-change: transform\` to decouple them from main thread repaints.
