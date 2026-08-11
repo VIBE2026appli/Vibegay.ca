@@ -86,24 +86,34 @@ export default function App() {
       overflow: 'hidden',
     }}>
 
+      {/*
+        ⚡ Bolt Performance Optimization:
+        Heavy blur filters cause significant repaint lag when overlapping interactive elements.
+        Adding \`transform: translateZ(0)\` and \`will-change: transform\` forces these
+        expensive elements onto their own GPU compositor layer, decoupling their
+        rendering from main thread UI interactions and ensuring 60fps hover states.
+      */}
       {/* Glow blobs */}
       <div style={{
         position: 'absolute', top: '-10%', left: '-15%',
         width: '55%', height: '70%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(80,40,160,0.55) 0%, transparent 70%)',
-        filter: 'blur(40px)', pointerEvents: 'none'
+        filter: 'blur(40px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
       <div style={{
         position: 'absolute', bottom: '-10%', right: '-10%',
         width: '50%', height: '60%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(180,130,20,0.3) 0%, transparent 70%)',
-        filter: 'blur(50px)', pointerEvents: 'none'
+        filter: 'blur(50px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
       <div style={{
         position: 'absolute', top: '20%', right: '5%',
         width: '35%', height: '50%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(40,80,180,0.35) 0%, transparent 70%)',
-        filter: 'blur(35px)', pointerEvents: 'none'
+        filter: 'blur(35px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
 
       {/* Phone mockup */}
