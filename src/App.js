@@ -96,8 +96,8 @@ export default function App() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: T.dark }}>
-      {/* Main content */}
-      <div style={{ flex: 1 }}>
+      {/* Main content — paddingBottom compensates for the fixed bottom nav (~60px) */}
+      <div style={{ flex: 1, paddingBottom: 64 }}>
         {renderView()}
       </div>
 
