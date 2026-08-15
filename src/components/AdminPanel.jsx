@@ -166,18 +166,15 @@ export default function AdminPanel({ profile }) {
     Promise.all([
       supabase.from('events').select('*').eq('slug','vibe-qbc-2026').single(),
       supabase.from('tickets').select('*').order('created_at', { ascending: false }),
-      supabase.from('comp_allocation').select('*').eq('event_id',
-        supabase.from('events').select('id').eq('slug','vibe-qbc-2026').single()
-      ),
       isAdmin
         ? supabase.from('profiles').select('id,email,role,display_name,created_at').order('created_at')
         : Promise.resolve({ data: [], error: null }),
-    ]).then(([evRes, tkRes, allocRes, usersRes]) => {
+    ]).then(([evRes, tkRes, usersRes]) => {
       if (evRes.error) setError(evRes.error.message);
       setEvent(evRes.data);
       setTickets(tkRes.data || []);
       setUsers(usersRes.data || []);
-      // Fetch allocation separately using event id
+      // Fetch allocation separately using the resolved event id
       if (evRes.data) {
         supabase.from('comp_allocation').select('*').eq('event_id', evRes.data.id).single()
           .then(({ data }) => setAllocation(data));

@@ -177,6 +177,36 @@ on conflict (event_id) do nothing;
 -- ─── 5. RPC: issue_comp_ticket (server-authoritative) ───────
 -- Issues one complimentary ticket; enforces allocation limit.
 -- Must be called by authenticated admin or co_admin.
+-- NOTE: audit_log table is defined in section 6 below; PL/pgSQL
+--       resolves names at execution time, so forward reference is safe.
+--       However, to maintain clear dependency order the audit_log table
+--       has been moved to section 5a immediately below.
+
+-- ─── 5a. Audit log (must precede the RPC that references it) ─
+create table if not exists public.audit_log (
+  id          bigserial primary key,
+  actor_id    uuid references auth.users(id),
+  action      text not null,
+  entity_type text,
+  entity_id   uuid,
+  detail      jsonb,
+  created_at  timestamptz not null default now()
+);
+
+alter table public.audit_log enable row level security;
+
+-- Only admins may read the audit log via the client SDK.
+create policy "audit_select_admin" on public.audit_log
+  for select using (
+    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
+  );
+
+-- Inserts are performed exclusively by security-definer RPCs, which
+-- run as the database owner and therefore bypass RLS entirely.
+-- No client-facing INSERT policy is created, preventing any authenticated
+-- user from injecting spurious audit records directly.
+
+-- ─── 5b. RPC ─────────────────────────────────────────────────
 create or replace function public.issue_comp_ticket(
   p_event_id    uuid,
   p_holder_id   uuid,
@@ -222,7 +252,7 @@ begin
     set issued_count = issued_count + 1, updated_at = now()
     where event_id = p_event_id;
 
-  -- Audit log
+  -- Audit log (bypasses RLS because this function runs as security definer)
   insert into public.audit_log(actor_id, action, entity_type, entity_id, detail)
   values (
     auth.uid(), 'issue_comp_ticket', 'ticket', v_ticket_id,
@@ -238,28 +268,7 @@ begin
 end;
 $$;
 
--- ─── 6. Audit log ────────────────────────────────────────────
-create table if not exists public.audit_log (
-  id          bigserial primary key,
-  actor_id    uuid references auth.users(id),
-  action      text not null,
-  entity_type text,
-  entity_id   uuid,
-  detail      jsonb,
-  created_at  timestamptz not null default now()
-);
-
-alter table public.audit_log enable row level security;
-
-create policy "audit_select_admin" on public.audit_log
-  for select using (
-    exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'admin')
-  );
-
-create policy "audit_insert_service" on public.audit_log
-  for insert with check (true); -- insert allowed from security-definer RPCs only
-
--- ─── 7. Updated_at triggers ─────────────────────────────────
+-- ─── 6. Updated_at triggers ─────────────────────────────────
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end;

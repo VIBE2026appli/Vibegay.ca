@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 const T = {
   gold: '#D4AF37',
   goldBorder: 'rgba(212,175,55,0.4)',
@@ -78,7 +80,7 @@ Ce texte est un **modèle provisoire**. Révision juridique requise avant le lan
 La billetterie payante n'est pas encore ouverte. Les conditions de remboursement seront publiées avant l'ouverture de la vente.
 
 **Billets gratuits officiels**
-Les billets gratuits officels sont attribués sur invitation. Ils sont nominatifs, non transférables et non remboursables.
+Les billets gratuits officiels sont attribués sur invitation. Ils sont nominatifs, non transférables et non remboursables.
 
 **Annulations d'événement**
 En cas d'annulation de l'événement, les détenteurs de billets payants seront remboursés selon la politique en vigueur à la date d'achat.
