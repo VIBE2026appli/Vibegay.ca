@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 const ALLOWED_EMAILS = ['vibeqbc412@hotmail.com'];
@@ -11,18 +11,21 @@ export default function MagicLogin() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
 
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (session && session.user) {
-      setLoggedIn(true);
-      setUserEmail(session.user.email);
-      setMessage('Connecté en tant que ' + session.user.email);
-      setIsError(false);
-    }
-    if (event === 'SIGNED_OUT') {
-      setLoggedIn(false);
-      setUserEmail('');
-    }
-  });
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && session.user) {
+        setLoggedIn(true);
+        setUserEmail(session.user.email);
+        setMessage('Connecté en tant que ' + session.user.email);
+        setIsError(false);
+      }
+      if (event === 'SIGNED_OUT') {
+        setLoggedIn(false);
+        setUserEmail('');
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const sendMagicLink = async () => {
     const normalized = email.trim().toLowerCase();
@@ -55,7 +58,11 @@ export default function MagicLogin() {
       <h2 style={{ marginBottom: '0.5rem' }}>Connexion sans mot de passe</h2>
       {!loggedIn ? (
         <>
+          <label htmlFor="magic-email" style={{ display: 'block', marginBottom: '0.25rem' }}>
+            Adresse e-mail
+          </label>
           <input
+            id="magic-email"
             type="email"
             placeholder="Votre adresse e-mail"
             value={email}
