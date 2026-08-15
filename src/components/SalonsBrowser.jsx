@@ -17,13 +17,16 @@ export default function SalonsBrowser({ displayName, city }) {
   const [category, setCategory] = useState('tous');
   const [activeSalon, setActiveSalon] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchSalons = async () => {
       setLoading(true);
+      setError('');
       let query = supabase.from('salons').select('*').eq('format', 'texte');
       if (category !== 'tous') query = query.eq('category', category);
-      const { data } = await query.order('name');
+      const { data, error: fetchError } = await query.order('name');
+      if (fetchError) setError('Impossible de charger les salons pour le moment.');
       setSalons(data || []);
       setLoading(false);
     };
@@ -42,7 +45,7 @@ export default function SalonsBrowser({ displayName, city }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: T.dark, color: T.text, fontFamily: 'Georgia, serif', padding: '24px 16px' }}>
+    <section aria-label="Salons texte" style={{ minHeight: '100vh', background: T.dark, color: T.text, fontFamily: 'Georgia, serif', padding: '24px 16px' }}>
       <h2 style={{ color: T.gold, letterSpacing: 6, fontWeight: 400, margin: '0 0 20px', textAlign: 'center' }}>
         SALONS TEXTE
       </h2>
@@ -65,6 +68,8 @@ export default function SalonsBrowser({ displayName, city }) {
 
       {loading ? (
         <p style={{ textAlign: 'center', color: T.goldBorder }}>Chargement…</p>
+      ) : error ? (
+        <p role="alert" style={{ textAlign: 'center', color: '#FF6B6B' }}>{error}</p>
       ) : salons.length === 0 ? (
         <p style={{ textAlign: 'center', color: T.goldBorder }}>Aucun salon dans cette catégorie.</p>
       ) : (
@@ -75,10 +80,8 @@ export default function SalonsBrowser({ displayName, city }) {
               border: `1px solid ${T.goldBorder}`,
               borderRadius: 10, padding: '16px 20px',
               cursor: 'pointer', textAlign: 'left',
-              transition: 'all 0.2s',
+              transition: 'all 0.2s', width: '100%',
             }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = T.gold}
-              onMouseLeave={e => e.currentTarget.style.borderColor = T.goldBorder}
             >
               <div style={{ color: T.gold, fontSize: 14, letterSpacing: 2, marginBottom: 4 }}>
                 {salon.name}
@@ -90,6 +93,6 @@ export default function SalonsBrowser({ displayName, city }) {
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

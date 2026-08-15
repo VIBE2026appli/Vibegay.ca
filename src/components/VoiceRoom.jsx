@@ -205,7 +205,7 @@ export default function VoiceRoom({ displayName, city, identity }) {
   const participantList = Object.entries(participants).filter(([id]) => id !== userId.current);
 
   return (
-    <div style={{ minHeight: '100vh', background: T.dark, color: T.text, fontFamily: 'Georgia, serif', padding: '24px 16px' }}>
+    <section aria-label="Salon voix" style={{ minHeight: '100vh', background: T.dark, color: T.text, fontFamily: 'Georgia, serif', padding: '24px 16px' }}>
       <h2 style={{ color: T.gold, letterSpacing: 6, fontWeight: 400, margin: '0 0 20px', textAlign: 'center' }}>
         SALON VOIX
       </h2>
@@ -235,7 +235,8 @@ export default function VoiceRoom({ displayName, city, identity }) {
               {muted ? '🎤 MUET' : '🎤 EN DIRECT'}
             </button>
 
-            <select value={listenFilter} onChange={e => setListenFilter(e.target.value)} style={{
+            <label className="sr-only" htmlFor="listen-filter">Filtrer l'écoute par identité</label>
+            <select id="listen-filter" value={listenFilter} onChange={e => setListenFilter(e.target.value)} style={{
               background: T.dark, border: `1px solid ${T.goldBorder}`,
               color: T.gold, padding: '8px 12px', borderRadius: 20,
               fontSize: 11, letterSpacing: 2, fontFamily: 'Georgia, serif', cursor: 'pointer',
@@ -291,6 +292,6 @@ export default function VoiceRoom({ displayName, city, identity }) {
           </div>
         </>
       )}
-    </div>
+    </section>
   );
 }
