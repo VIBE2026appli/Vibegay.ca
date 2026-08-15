@@ -55,11 +55,15 @@ export default function Auth({ onAuth }) {
     setLoading(false);
   };
 
-  const handleAnon = () => {
+  const handleAnon = async () => {
     const name = genAnonName();
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInAnonymously();
+    setLoading(false);
+    if (error) { msg(error.message, true); return; }
     localStorage.setItem('vibe_displayName', name);
     localStorage.setItem('vibe_isGuest', 'true');
-    onAuth({ user: null, displayName: name, isGuest: true });
+    onAuth({ user: data.user, displayName: name, isGuest: true });
   };
 
   const inputStyle = {
