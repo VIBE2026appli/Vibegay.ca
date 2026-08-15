@@ -77,26 +77,26 @@ export default function Auth({ onAuth }) {
   };
 
   return (
-    <div style={{
+    <main style={{
       minHeight: '100vh', background: T.dark,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: 'Georgia, serif',
     }}>
       <div style={{
-        width: 320, padding: '32px 28px',
+        width: 'min(320px, 92vw)', padding: '32px 28px',
         border: `1px solid ${T.goldBorder}`,
         borderRadius: 20,
         background: 'rgba(10,10,10,0.95)',
         boxShadow: `0 0 40px rgba(212,175,55,0.08)`,
       }}>
-        <h2 style={{ color: T.gold, letterSpacing: 8, textAlign: 'center', margin: '0 0 24px', fontWeight: 400, fontSize: 22 }}>
+        <h1 style={{ color: T.gold, letterSpacing: 8, textAlign: 'center', margin: '0 0 24px', fontWeight: 400, fontSize: 22 }}>
           V I B E
-        </h2>
+        </h1>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', marginBottom: 24, borderBottom: `1px solid ${T.goldBorder}` }}>
+        <div role="tablist" aria-label="Méthodes de connexion" style={{ display: 'flex', marginBottom: 24, borderBottom: `1px solid ${T.goldBorder}` }}>
           {['connexion', 'inscription'].map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} style={{
               flex: 1, background: 'none', border: 'none',
               color: tab === t ? T.gold : T.goldBorder,
               cursor: 'pointer', padding: '8px 0',
@@ -110,34 +110,39 @@ export default function Auth({ onAuth }) {
           ))}
         </div>
 
-        <label style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>E-MAIL</label>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          style={inputStyle}
-          disabled={loading}
-        />
+        <form onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+          <label htmlFor="auth-email" style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>E-MAIL</label>
+          <input
+            id="auth-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={inputStyle}
+            disabled={loading}
+          />
 
-        <label style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>MOT DE PASSE</label>
-        <input
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSubmit()}
-          style={inputStyle}
-          disabled={loading}
-        />
+          <label htmlFor="auth-password" style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>MOT DE PASSE</label>
+          <input
+            id="auth-password"
+            type="password"
+            autoComplete={tab === 'connexion' ? 'current-password' : 'new-password'}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={inputStyle}
+            disabled={loading}
+          />
 
-        <button onClick={handleSubmit} disabled={loading} style={{
-          width: '100%', padding: '12px', marginTop: 8,
-          background: T.goldDim, border: `1px solid ${T.gold}`,
-          color: T.gold, cursor: loading ? 'not-allowed' : 'pointer',
-          fontSize: 12, letterSpacing: 3, fontFamily: 'Georgia, serif',
-          borderRadius: 4, transition: 'all 0.2s',
-        }}>
-          {loading ? '...' : (tab === 'connexion' ? 'CONNEXION' : 'CRÉER UN COMPTE')}
-        </button>
+          <button type="submit" disabled={loading} style={{
+            width: '100%', padding: '12px', marginTop: 8,
+            background: T.goldDim, border: `1px solid ${T.gold}`,
+            color: T.gold, cursor: loading ? 'not-allowed' : 'pointer',
+            fontSize: 12, letterSpacing: 3, fontFamily: 'Georgia, serif',
+            borderRadius: 4, transition: 'all 0.2s',
+          }}>
+            {loading ? 'Chargement…' : (tab === 'connexion' ? 'CONNEXION' : 'CRÉER UN COMPTE')}
+          </button>
+        </form>
 
         <div style={{ textAlign: 'center', margin: '16px 0 4px', color: T.goldBorder, fontSize: 11 }}>— ou —</div>
 
@@ -152,11 +157,11 @@ export default function Auth({ onAuth }) {
         </button>
 
         {message && (
-          <p style={{ marginTop: 14, color: isError ? T.error : T.success, fontSize: 13, textAlign: 'center' }}>
+          <p role={isError ? 'alert' : 'status'} aria-live={isError ? 'assertive' : 'polite'} style={{ marginTop: 14, color: isError ? T.error : T.success, fontSize: 13, textAlign: 'center' }}>
             {message}
           </p>
         )}
       </div>
-    </div>
+    </main>
   );
 }

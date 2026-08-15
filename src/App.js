@@ -36,8 +36,8 @@ function Home({ displayName, onLogout }) {
       <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
       <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
 
-      <div style={{
-        position:'relative',zIndex:10,width:260,
+      <section aria-label="Accueil VIBE" style={{
+        position:'relative',zIndex:10,width:'min(260px, 90vw)',
         background:'linear-gradient(160deg,#1a1a1a 0%,#0d0d0d 100%)',
         borderRadius:36,border:'2px solid rgba(212,175,55,0.25)',
         boxShadow:'0 30px 80px rgba(0,0,0,0.9),0 0 40px rgba(212,175,55,0.08)',
@@ -56,7 +56,7 @@ function Home({ displayName, onLogout }) {
           padding:'6px 18px',cursor:'pointer',fontSize:10,letterSpacing:2,
           fontFamily:'Georgia,serif',borderRadius:20,
         }}>DÉCONNEXION</button>
-      </div>
+      </section>
 
       {sparkles.map(([x,y],i) => (
         <div key={i} style={{position:'absolute',left:`${x}%`,top:`${y}%`,color:T.gold,fontSize:i===0?20:12,opacity:0.6,pointerEvents:'none',zIndex:5,textShadow:`0 0 8px ${T.gold}`}}>✦</div>
@@ -95,14 +95,15 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: T.dark }}>
+    <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: T.dark }}>
+      <a href="#main-content" className="sr-only">Aller au contenu principal</a>
       {/* Main content — paddingBottom compensates for the fixed bottom nav (~60px) */}
-      <div style={{ flex: 1, paddingBottom: 64 }}>
+      <main id="main-content" style={{ flex: 1, paddingBottom: 74 }}>
         {renderView()}
-      </div>
+      </main>
 
       {/* Bottom nav */}
-      <nav style={{
+      <nav aria-label="Navigation principale" style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: 'rgba(5,5,5,0.95)', borderTop: `1px solid ${T.goldBorder}`,
         display: 'flex', justifyContent: 'space-around', alignItems: 'center',
@@ -110,12 +111,17 @@ export default function App() {
         backdropFilter: 'blur(10px)',
       }}>
         {NAV_ITEMS.map(item => (
-          <button key={item.id} onClick={() => setView(item.id)} style={{
+          <button
+            key={item.id}
+            onClick={() => setView(item.id)}
+            aria-current={view === item.id ? 'page' : undefined}
+            aria-label={item.label}
+            style={{
             background: 'none', border: 'none', cursor: 'pointer',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
             padding: '4px 8px',
           }}>
-            <span style={{ fontSize: 20 }}>{item.icon}</span>
+            <span aria-hidden="true" style={{ fontSize: 20 }}>{item.icon}</span>
             <span style={{
               fontSize: 9, letterSpacing: 1,
               color: view === item.id ? T.gold : T.goldBorder,

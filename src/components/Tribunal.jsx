@@ -23,15 +23,22 @@ export default function Tribunal({ displayName }) {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const intervalRef = useRef(null);
 
   const fetchSignalements = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('tribunal_signalements')
       .select('*')
       .order('created_at', { ascending: false })
       .limit(20);
-    if (data) setSignalements(data);
+    if (error) {
+      setLoadError('Impossible de charger les signalements.');
+      setSignalements([]);
+    } else {
+      setLoadError('');
+      setSignalements(data || []);
+    }
   };
 
   useEffect(() => {
@@ -76,7 +83,7 @@ export default function Tribunal({ displayName }) {
       </h2>
 
       {/* Signalement form */}
-      <div style={{
+      <form onSubmit={e => { e.preventDefault(); handleSignal(); }} style={{
         maxWidth: 480, margin: '0 auto 28px', padding: '20px',
         border: `1px solid ${T.goldBorder}`, borderRadius: 10,
         background: 'rgba(10,10,10,0.9)',
@@ -85,8 +92,9 @@ export default function Tribunal({ displayName }) {
           SIGNALER UN UTILISATEUR
         </h3>
 
-        <label style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>PSEUDO À SIGNALER</label>
+        <label htmlFor="pseudo-reporte" style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>PSEUDO À SIGNALER</label>
         <input
+          id="pseudo-reporte"
           value={pseudoReporte}
           onChange={e => setPseudoReporte(e.target.value)}
           placeholder="pseudo"
@@ -99,8 +107,8 @@ export default function Tribunal({ displayName }) {
           }}
         />
 
-        <label style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>MOTIF</label>
-        <select value={motif} onChange={e => setMotif(e.target.value)} style={{
+        <label htmlFor="motif-reporte" style={{ color: T.goldBorder, fontSize: 11, letterSpacing: 2 }}>MOTIF</label>
+        <select id="motif-reporte" value={motif} onChange={e => setMotif(e.target.value)} style={{
           display: 'block', width: '100%', marginTop: 6, marginBottom: 16,
           background: T.dark, border: `1px solid ${T.goldBorder}`,
           color: T.text, padding: '8px', fontSize: 13, fontFamily: 'Georgia, serif',
@@ -109,7 +117,7 @@ export default function Tribunal({ displayName }) {
           {MOTIFS.map(m => <option key={m}>{m}</option>)}
         </select>
 
-        <button onClick={handleSignal} disabled={submitting} style={{
+        <button type="submit" disabled={submitting} style={{
           width: '100%', padding: '10px',
           background: T.goldDim, border: `1px solid ${T.gold}`,
           color: T.gold, cursor: submitting ? 'not-allowed' : 'pointer',
@@ -119,12 +127,13 @@ export default function Tribunal({ displayName }) {
         </button>
 
         {message && (
-          <p style={{ marginTop: 10, color: isError ? T.error : T.success, fontSize: 13 }}>{message}</p>
+          <p role={isError ? 'alert' : 'status'} style={{ marginTop: 10, color: isError ? T.error : T.success, fontSize: 13 }}>{message}</p>
         )}
-      </div>
+      </form>
 
       {/* Signalements list */}
       <div style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {loadError && <p role="alert" style={{ textAlign: 'center', color: T.error }}>{loadError}</p>}
         {signalements.map(s => {
           const total = totalVotes(s);
           const pct = pctCoupable(s);

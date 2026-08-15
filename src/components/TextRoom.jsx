@@ -13,6 +13,7 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const bottomRef = useRef(null);
   const seenIds = useRef(new Set());
 
@@ -30,9 +31,13 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
       .eq('salon_id', salon.id)
       .order('created_at', { ascending: true })
       .limit(100)
-      .then(({ data }) => {
-        if (data) data.forEach(m => { seenIds.current.add(m.id); });
-        setMessages(data || []);
+      .then(({ data, error: fetchError }) => {
+        if (fetchError) {
+          setError('Impossible de charger les messages.');
+        } else {
+          if (data) data.forEach(m => { seenIds.current.add(m.id); });
+          setMessages(data || []);
+        }
         setLoading(false);
       });
 
@@ -94,10 +99,10 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: T.dark, fontFamily: 'Georgia, serif' }}>
+    <section aria-label={`Salon ${salon.name}`} style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: T.dark, fontFamily: 'Georgia, serif' }}>
       {/* Header */}
       <div style={{ padding: '14px 16px', borderBottom: `1px solid ${T.goldBorder}`, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={onBack} style={{ background: 'none', border: 'none', color: T.gold, cursor: 'pointer', fontSize: 18 }}>←</button>
+        <button onClick={onBack} aria-label="Retour aux salons" style={{ background: 'none', border: 'none', color: T.gold, cursor: 'pointer', fontSize: 18 }}>←</button>
         <div>
           <div style={{ color: T.gold, letterSpacing: 2, fontSize: 14 }}>{salon.name}</div>
           <div style={{ color: T.goldBorder, fontSize: 11 }}>{salon.city} · {salon.category}</div>
@@ -108,6 +113,8 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {loading ? (
           <p style={{ color: T.goldBorder, textAlign: 'center' }}>Chargement…</p>
+        ) : error ? (
+          <p role="alert" style={{ color: '#FF6B6B', textAlign: 'center' }}>{error}</p>
         ) : messages.length === 0 ? (
           <p style={{ color: T.goldBorder, textAlign: 'center' }}>Aucun message — sois le premier !</p>
         ) : (
@@ -133,6 +140,7 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
       {/* Input */}
       <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.goldBorder}`, display: 'flex', gap: 10 }}>
         <input
+          aria-label="Écrire un message"
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
@@ -149,6 +157,6 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
           cursor: 'pointer', fontSize: 16,
         }}>→</button>
       </div>
-    </div>
+    </section>
   );
 }
