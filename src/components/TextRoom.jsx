@@ -32,9 +32,12 @@ export default function TextRoom({ salon, displayName, city, onBack }) {
       .order('created_at', { ascending: true })
       .limit(100)
       .then(({ data, error: fetchError }) => {
-        if (fetchError) setError('Impossible de charger les messages.');
-        if (data) data.forEach(m => { seenIds.current.add(m.id); });
-        setMessages(data || []);
+        if (fetchError) {
+          setError('Impossible de charger les messages.');
+        } else {
+          if (data) data.forEach(m => { seenIds.current.add(m.id); });
+          setMessages(data || []);
+        }
         setLoading(false);
       });
 

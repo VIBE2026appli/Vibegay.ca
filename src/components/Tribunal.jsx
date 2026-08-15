@@ -32,10 +32,13 @@ export default function Tribunal({ displayName }) {
       .select('*')
       .order('created_at', { ascending: false })
       .limit(20);
-    if (error) setLoadError('Impossible de charger les signalements.');
-    if (error) setSignalements([]);
-    else setLoadError('');
-    if (data) setSignalements(data);
+    if (error) {
+      setLoadError('Impossible de charger les signalements.');
+      setSignalements([]);
+    } else {
+      setLoadError('');
+      setSignalements(data || []);
+    }
   };
 
   useEffect(() => {

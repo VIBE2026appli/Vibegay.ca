@@ -34,11 +34,9 @@ describe('Auth', () => {
       root.render(<Auth onAuth={jest.fn()} />);
     });
 
-    const submit = Array.from(container.querySelectorAll('button')).find((button) =>
-      button.textContent.includes('CONNEXION')
-    );
+    const form = container.querySelector('form');
     act(() => {
-      submit.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     });
 
     expect(container.textContent).toContain('Remplis tous les champs.');

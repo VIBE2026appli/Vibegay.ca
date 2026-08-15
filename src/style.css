@@ -65,6 +65,24 @@ button:disabled {
   border: 0;
 }
 
+.sr-only:focus,
+.sr-only:focus-visible {
+  clip: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  white-space: normal;
+  padding: 0.5rem 0.75rem;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 9999;
+  background: #111;
+  color: var(--vibe-gold);
+  border: 1px solid var(--vibe-gold-border);
+  border-radius: 0.25rem;
+}
+
 .app-shell {
   width: 100%;
   max-width: 100vw;
