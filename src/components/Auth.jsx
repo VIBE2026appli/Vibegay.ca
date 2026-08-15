@@ -157,7 +157,7 @@ export default function Auth({ onAuth }) {
         </button>
 
         {message && (
-          <p role={isError ? 'alert' : 'status'} aria-live="polite" style={{ marginTop: 14, color: isError ? T.error : T.success, fontSize: 13, textAlign: 'center' }}>
+          <p role={isError ? 'alert' : 'status'} aria-live={isError ? 'assertive' : 'polite'} style={{ marginTop: 14, color: isError ? T.error : T.success, fontSize: 13, textAlign: 'center' }}>
             {message}
           </p>
         )}

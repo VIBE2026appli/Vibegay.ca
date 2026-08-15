@@ -33,6 +33,7 @@ export default function Tribunal({ displayName }) {
       .order('created_at', { ascending: false })
       .limit(20);
     if (error) setLoadError('Impossible de charger les signalements.');
+    if (error) setSignalements([]);
     else setLoadError('');
     if (data) setSignalements(data);
   };

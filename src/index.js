@@ -6,7 +6,7 @@ import './style.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("L'élément #root est introuvable dans public/index.html");
+  throw new Error('Root element #root not found in public/index.html');
 }
 const root = createRoot(rootElement);
 
