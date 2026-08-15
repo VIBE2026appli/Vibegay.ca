@@ -87,23 +87,27 @@ export default function App() {
     }}>
 
       {/* Glow blobs */}
+      {/* Optimization: Force heavy CSS filters onto GPU layer to prevent main-thread repaint lag */}
       <div style={{
         position: 'absolute', top: '-10%', left: '-15%',
         width: '55%', height: '70%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(80,40,160,0.55) 0%, transparent 70%)',
-        filter: 'blur(40px)', pointerEvents: 'none'
+        filter: 'blur(40px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
       <div style={{
         position: 'absolute', bottom: '-10%', right: '-10%',
         width: '50%', height: '60%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(180,130,20,0.3) 0%, transparent 70%)',
-        filter: 'blur(50px)', pointerEvents: 'none'
+        filter: 'blur(50px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
       <div style={{
         position: 'absolute', top: '20%', right: '5%',
         width: '35%', height: '50%', borderRadius: '50%',
         background: 'radial-gradient(circle, rgba(40,80,180,0.35) 0%, transparent 70%)',
-        filter: 'blur(35px)', pointerEvents: 'none'
+        filter: 'blur(35px)', pointerEvents: 'none',
+        transform: 'translateZ(0)', willChange: 'transform'
       }}/>
 
       {/* Phone mockup */}
