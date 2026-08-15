@@ -47,13 +47,15 @@ export default function VoiceRoom({ displayName, city, identity }) {
   const [joined, setJoined] = useState(false);
   const [error, setError] = useState('');
 
-  const localStream = useRef(null);
+  const localStreamRef = useRef(null);
+  const [localStreamState, setLocalStreamState] = useState(null);
   const peers = useRef({});        // peerId → { pc, stream }
   const audioRefs = useRef({});    // peerId → <audio>
   const channelRef = useRef(null);
-  const userId = useRef(displayName + '-' + Math.random().toString(36).slice(2, 7));
+  const userId = useRef(displayName + '-' + crypto.randomUUID().slice(0, 8));
 
-  const localSpeaking = useVAD(localStream.current);
+  // localStreamState triggers re-render so useVAD receives the real stream
+  const localSpeaking = useVAD(localStreamState);
 
   const applyFilter = useCallback((peerId, stream) => {
     const el = audioRefs.current[peerId];
@@ -75,7 +77,7 @@ export default function VoiceRoom({ displayName, city, identity }) {
   const createPeer = useCallback((peerId, polite) => {
     const pc = new RTCPeerConnection(STUN);
 
-    localStream.current?.getTracks().forEach(t => pc.addTrack(t, localStream.current));
+    localStreamRef.current?.getTracks().forEach(t => pc.addTrack(t, localStreamRef.current));
 
     pc.ontrack = (e) => {
       const stream = e.streams[0];
@@ -149,7 +151,8 @@ export default function VoiceRoom({ displayName, city, identity }) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       stream.getAudioTracks().forEach(t => { t.enabled = false; }); // start muted
-      localStream.current = stream;
+      localStreamRef.current = stream;
+      setLocalStreamState(stream);
 
       const channel = supabase.channel('voix-global', {
         config: { presence: { key: userId.current } },
@@ -180,8 +183,9 @@ export default function VoiceRoom({ displayName, city, identity }) {
   const leaveRoom = () => {
     Object.values(peers.current).forEach(({ pc }) => pc.close());
     peers.current = {};
-    localStream.current?.getTracks().forEach(t => t.stop());
-    localStream.current = null;
+    localStreamRef.current?.getTracks().forEach(t => t.stop());
+    localStreamRef.current = null;
+    setLocalStreamState(null);
     channelRef.current?.unsubscribe();
     channelRef.current = null;
     setJoined(false);
@@ -189,7 +193,7 @@ export default function VoiceRoom({ displayName, city, identity }) {
   };
 
   const toggleMute = () => {
-    const tracks = localStream.current?.getAudioTracks();
+    const tracks = localStreamRef.current?.getAudioTracks();
     if (!tracks) return;
     const next = !muted;
     tracks.forEach(t => { t.enabled = !next; });

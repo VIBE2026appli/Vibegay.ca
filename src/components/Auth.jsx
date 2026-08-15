@@ -12,7 +12,9 @@ const T = {
 };
 
 function genAnonName() {
-  return 'Anon' + Math.floor(1000 + Math.random() * 9000);
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return 'Anon' + (1000 + (arr[0] % 9000));
 }
 
 export default function Auth({ onAuth }) {
@@ -33,9 +35,10 @@ export default function Auth({ onAuth }) {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) { msg(error.message, true); }
       else {
-        localStorage.setItem('vibe_displayName', data.user.email.split('@')[0]);
+        const name = email.split('@')[0];
+        localStorage.setItem('vibe_displayName', name);
         localStorage.setItem('vibe_isGuest', 'false');
-        onAuth({ user: data.user, displayName: data.user.email.split('@')[0], isGuest: false });
+        onAuth({ user: data.user, displayName: name, isGuest: false });
       }
     } else {
       const { data, error } = await supabase.auth.signUp({ email, password });
@@ -43,9 +46,10 @@ export default function Auth({ onAuth }) {
       else if (data.user && !data.user.confirmed_at) {
         msg('Compte créé ! Vérifie ton e-mail pour confirmer.', false);
       } else {
-        localStorage.setItem('vibe_displayName', data.user.email.split('@')[0]);
+        const name = email.split('@')[0];
+        localStorage.setItem('vibe_displayName', name);
         localStorage.setItem('vibe_isGuest', 'false');
-        onAuth({ user: data.user, displayName: data.user.email.split('@')[0], isGuest: false });
+        onAuth({ user: data.user, displayName: name, isGuest: false });
       }
     }
     setLoading(false);
