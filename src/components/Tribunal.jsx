@@ -47,7 +47,7 @@ export default function Tribunal({ displayName }) {
     setSubmitting(true);
     const { error } = await supabase.from('tribunal_signalements').insert({
       pseudo_reporter: displayName || 'Anonyme',
-      pseudo_reporte: pseudoReporte.trim(),
+      accused_username: pseudoReporte.trim(),
       motif,
       votes_coupable: 0,
       votes_innocent: 0,
@@ -135,7 +135,7 @@ export default function Tribunal({ displayName }) {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                 <div>
-                  <span style={{ color: T.gold, fontSize: 13 }}>{s.pseudo_reporte}</span>
+                  <span style={{ color: T.gold, fontSize: 13 }}>{s.accused_username}</span>
                   <span style={{ color: T.goldBorder, fontSize: 11, marginLeft: 8 }}>· {s.motif}</span>
                 </div>
                 <span style={{

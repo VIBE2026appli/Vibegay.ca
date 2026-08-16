@@ -3,6 +3,10 @@ import Auth from './components/Auth';
 import SalonsBrowser from './components/SalonsBrowser';
 import VoiceRoom from './components/VoiceRoom';
 import Tribunal from './components/Tribunal';
+import EventPage from './components/EventPage';
+import AdminPanel from './components/AdminPanel';
+import LegalPages from './components/LegalPages';
+import useProfile from './hooks/useProfile';
 
 // Lazy-load Globe (three.js is ~800KB)
 const Globe = lazy(() => import('./components/Globe'));
@@ -21,6 +25,8 @@ const NAV_ITEMS = [
   { id: 'voix',      label: 'Voix',       icon: '🎤' },
   { id: 'globe',     label: 'Globe',      icon: '🌍' },
   { id: 'tribunal',  label: 'Tribunal',   icon: '⚖️' },
+  { id: 'evenement', label: 'QBC 2026',   icon: '🎟️' },
+  { id: 'legal',     label: 'Légal',      icon: '📜' },
 ];
 
 const sparkles = [[88,85],[12,20],[90,15],[5,70]];
@@ -80,40 +86,74 @@ export default function App() {
   const city = user?.user_metadata?.city || '';
   const identity = user?.user_metadata?.identity || 'Mixte';
 
+  return <AuthenticatedApp
+    user={user}
+    displayName={displayName}
+    city={city}
+    identity={identity}
+    view={view}
+    setView={setView}
+    onLogout={handleLogout}
+  />;
+}
+
+function AuthenticatedApp({ user, displayName, city, identity, view, setView, onLogout }) {
+  const { profile, loading: profileLoading } = useProfile(user);
+
+  if (profileLoading) {
+    return (
+      <div style={{ display:'flex', height:'100vh', alignItems:'center', justifyContent:'center', background:T.dark, color:T.gold, fontFamily:'Georgia,serif', letterSpacing:4 }}>
+        CHARGEMENT…
+      </div>
+    );
+  }
+
+  const isAdmin   = profile?.role === 'admin';
+  const isCoAdmin = profile?.role === 'co_admin';
+  const canAdmin  = isAdmin || isCoAdmin;
+
+  const allNavItems = [
+    ...NAV_ITEMS,
+    ...(canAdmin ? [{ id: 'admin', label: 'Admin', icon: '🔑' }] : []),
+  ];
+
   const renderView = () => {
     switch (view) {
-      case 'texte':    return <SalonsBrowser displayName={displayName} city={city} />;
-      case 'voix':     return <VoiceRoom displayName={displayName} city={city} identity={identity} />;
-      case 'globe':    return (
+      case 'texte':     return <SalonsBrowser displayName={displayName} city={city} />;
+      case 'voix':      return <VoiceRoom displayName={displayName} city={city} identity={identity} />;
+      case 'globe':     return (
         <Suspense fallback={<div style={{display:'flex',height:'100vh',alignItems:'center',justifyContent:'center',background:T.dark,color:T.gold,fontFamily:'Georgia,serif',letterSpacing:4}}>CHARGEMENT…</div>}>
           <Globe />
         </Suspense>
       );
-      case 'tribunal': return <Tribunal displayName={displayName} />;
-      default:         return <Home displayName={displayName} onLogout={handleLogout} />;
+      case 'tribunal':  return <Tribunal displayName={displayName} />;
+      case 'evenement': return <EventPage user={user} />;
+      case 'admin':
+        if (!canAdmin) return <div style={{display:'flex',height:'100vh',alignItems:'center',justifyContent:'center',background:T.dark,color:'#FF6B6B',fontFamily:'Georgia,serif',letterSpacing:2}}>ACCÈS REFUSÉ</div>;
+        return <AdminPanel profile={profile} />;
+      case 'legal':     return <LegalPages />;
+      default:          return <Home displayName={displayName} onLogout={onLogout} />;
     }
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: T.dark }}>
-      {/* Main content — paddingBottom compensates for the fixed bottom nav (~60px) */}
       <div style={{ flex: 1, paddingBottom: 64 }}>
         {renderView()}
       </div>
-
-      {/* Bottom nav */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: 'rgba(5,5,5,0.95)', borderTop: `1px solid ${T.goldBorder}`,
         display: 'flex', justifyContent: 'space-around', alignItems: 'center',
         padding: '8px 0', zIndex: 100,
         backdropFilter: 'blur(10px)',
+        overflowX: 'auto',
       }}>
-        {NAV_ITEMS.map(item => (
+        {allNavItems.map(item => (
           <button key={item.id} onClick={() => setView(item.id)} style={{
             background: 'none', border: 'none', cursor: 'pointer',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-            padding: '4px 8px',
+            padding: '4px 8px', flexShrink: 0,
           }}>
             <span style={{ fontSize: 20 }}>{item.icon}</span>
             <span style={{

@@ -55,11 +55,15 @@ export default function Auth({ onAuth }) {
     setLoading(false);
   };
 
-  const handleAnon = () => {
+  const handleAnon = async () => {
     const name = genAnonName();
+    setLoading(true);
+    const { data, error } = await supabase.auth.signInAnonymously();
+    setLoading(false);
+    if (error) { msg(error.message, true); return; }
     localStorage.setItem('vibe_displayName', name);
     localStorage.setItem('vibe_isGuest', 'true');
-    onAuth({ user: null, displayName: name, isGuest: true });
+    onAuth({ user: data.user, displayName: name, isGuest: true });
   };
 
   const inputStyle = {
@@ -139,17 +143,9 @@ export default function Auth({ onAuth }) {
           {loading ? '...' : (tab === 'connexion' ? 'CONNEXION' : 'CRÉER UN COMPTE')}
         </button>
 
-        <div style={{ textAlign: 'center', margin: '16px 0 4px', color: T.goldBorder, fontSize: 11 }}>— ou —</div>
-
-        <button onClick={handleAnon} style={{
-          width: '100%', padding: '10px',
-          background: 'transparent', border: `1px solid ${T.goldBorder}`,
-          color: T.goldBorder, cursor: 'pointer',
-          fontSize: 11, letterSpacing: 2, fontFamily: 'Georgia, serif',
-          borderRadius: 4,
-        }}>
-          CONTINUER EN ANONYME
-        </button>
+        <p style={{ textAlign: 'center', margin: '16px 0 0', color: T.goldBorder, fontSize: 11, lineHeight: 1.6 }}>
+          Un compte est requis pour accéder à la plateforme VIBE.
+        </p>
 
         {message && (
           <p style={{ marginTop: 14, color: isError ? T.error : T.success, fontSize: 13, textAlign: 'center' }}>
