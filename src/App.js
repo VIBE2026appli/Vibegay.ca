@@ -39,8 +39,10 @@ function Home({ displayName, onLogout }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'center', fontFamily: 'Georgia, serif', overflow: 'hidden',
     }}>
-      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
+      {/* ⚡ Bolt: Forced heavy blur filter onto a separate GPU layer to prevent severe main-thread repaint lag */}
+      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none', transform: 'translateZ(0)', willChange: 'transform'}}/>
+      {/* ⚡ Bolt: Forced heavy blur filter onto a separate GPU layer to prevent severe main-thread repaint lag */}
+      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none', transform: 'translateZ(0)', willChange: 'transform'}}/>
 
       <div style={{
         position:'relative',zIndex:10,width:260,
@@ -141,6 +143,7 @@ function AuthenticatedApp({ user, displayName, city, identity, view, setView, on
       <div style={{ flex: 1, paddingBottom: 64 }}>
         {renderView()}
       </div>
+      {/* ⚡ Bolt: Forced backdrop blur onto a separate GPU layer to prevent severe main-thread repaint lag during scrolling/navigation */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: 'rgba(5,5,5,0.95)', borderTop: `1px solid ${T.goldBorder}`,
@@ -148,6 +151,8 @@ function AuthenticatedApp({ user, displayName, city, identity, view, setView, on
         padding: '8px 0', zIndex: 100,
         backdropFilter: 'blur(10px)',
         overflowX: 'auto',
+        transform: 'translateZ(0)',
+        willChange: 'transform'
       }}>
         {allNavItems.map(item => (
           <button key={item.id} onClick={() => setView(item.id)} style={{
