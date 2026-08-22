@@ -39,8 +39,9 @@ function Home({ displayName, onLogout }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'center', fontFamily: 'Georgia, serif', overflow: 'hidden',
     }}>
-      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
+      {/* ⚡ Bolt: Hardware accelerate heavy blur filters */}
+      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',transform:'translateZ(0)',willChange:'transform',pointerEvents:'none'}}/>
+      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',transform:'translateZ(0)',willChange:'transform',pointerEvents:'none'}}/>
 
       <div style={{
         position:'relative',zIndex:10,width:260,
@@ -141,12 +142,13 @@ function AuthenticatedApp({ user, displayName, city, identity, view, setView, on
       <div style={{ flex: 1, paddingBottom: 64 }}>
         {renderView()}
       </div>
+      {/* ⚡ Bolt: Hardware accelerate heavy blur filters */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
         background: 'rgba(5,5,5,0.95)', borderTop: `1px solid ${T.goldBorder}`,
         display: 'flex', justifyContent: 'space-around', alignItems: 'center',
         padding: '8px 0', zIndex: 100,
-        backdropFilter: 'blur(10px)',
+        backdropFilter: 'blur(10px)', transform: 'translateZ(0)', willChange: 'transform',
         overflowX: 'auto',
       }}>
         {allNavItems.map(item => (
