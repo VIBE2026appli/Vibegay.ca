@@ -39,8 +39,9 @@ function Home({ displayName, onLogout }) {
       display: 'flex', flexDirection: 'column', alignItems: 'center',
       justifyContent: 'center', fontFamily: 'Georgia, serif', overflow: 'hidden',
     }}>
-      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none'}}/>
-      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none'}}/>
+      {/* ⚡ Bolt: Force heavy blur filters onto GPU layer to prevent main-thread repaint lag */}
+      <div style={{ position:'absolute',top:'-10%',left:'-15%',width:'55%',height:'70%',borderRadius:'50%',background:'radial-gradient(circle,rgba(80,40,160,0.55) 0%,transparent 70%)',filter:'blur(40px)',pointerEvents:'none', transform: 'translateZ(0)', willChange: 'transform'}}/>
+      <div style={{ position:'absolute',bottom:'-10%',right:'-10%',width:'50%',height:'60%',borderRadius:'50%',background:'radial-gradient(circle,rgba(180,130,20,0.3) 0%,transparent 70%)',filter:'blur(50px)',pointerEvents:'none', transform: 'translateZ(0)', willChange: 'transform'}}/>
 
       <div style={{
         position:'relative',zIndex:10,width:260,
