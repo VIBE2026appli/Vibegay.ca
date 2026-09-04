@@ -18,6 +18,8 @@
             border: 1px solid rgba(212,175,55,0.3); padding: 30px; 
             border-radius: 40px; background: rgba(0,0,0,0.75); 
             backdrop-filter: blur(8px); box-shadow: 0 0 30px rgba(212,175,55,0.1); 
+            /* ⚡ Bolt: Hardware accelerate backdrop-filter */
+            transform: translateZ(0); will-change: transform;
         }
 
         .logo { color: #d4af37; font-size: 26px; letter-spacing: 10px; margin-bottom: 35px; text-transform: uppercase; }
